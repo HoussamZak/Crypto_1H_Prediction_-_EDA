@@ -3,11 +3,11 @@ from flask import Flask, request, jsonify, render_template
 import pickle
 
 app = Flask(__name__)
-model = pickle.load(open('model_pkl', 'rb'))
+model = pickle.load(open('4_Model_3MIN_JUN2021_DEC2021.pkl', 'rb'))
 
 
 @app.route('/hi')
-def home():
+def hello():
     return render_template('index.html')
 
 @app.route('/predict',methods=['POST'])
