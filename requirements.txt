@@ -116,7 +116,6 @@ patsy==0.5.2
 pickleshare==0.7.5
 Pillow==8.4.0
 platformdirs==2.4.0
-# platform_system == "Windows"
 plotly==4.14.3
 pprintpp==0.4.0
 prometheus-client==0.8.0
@@ -193,5 +192,5 @@ widgetsnbextension==3.5.1
 wrapt==1.13.3
 xmltodict==0.12.0
 yarl==1.7.2
-yfinance==0.1.63
+# yfinance==0.1.63
 zipp==3.6.0
