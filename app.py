@@ -1,13 +1,13 @@
 import numpy as np
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, flash
 import pickle
 
 app = Flask(__name__)
-model = pickle.load(open('4_Model_3MIN_JUN2021_DEC2021.pkl', 'rb'))
+model = pickle.load(open('scaled/btc_np_scaled.npy', 'rb'))
 
 
-@app.route('/hi')
-def hello():
+@app.route("/hello")
+def index():
     return render_template('index.html')
 
 @app.route('/predict',methods=['POST'])
@@ -21,7 +21,7 @@ def predict():
 
     output = round(prediction[0], 2)
 
-    return render_template('index.html', prediction_text='Employee Salary should be $ {}'.format(output))
+    return render_template('index.html', prediction_text='Future Price: {}'.format(output))
 
 
 if __name__ == "__main__":
