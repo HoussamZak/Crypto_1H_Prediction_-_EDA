@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+    <title ><center>Predictions for the next ten 3min candle close are:</center></title>
+   <body>
+    <ul>
+    {% for row in data[0] %}
+    
+        <li>{{row}}</li>
+    {% endfor %}
+    </ul>
+   </body>
+</html>
