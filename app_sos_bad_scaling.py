@@ -79,51 +79,54 @@ scaler_pred = MinMaxScaler()
 scaler_pred.fit_transform(np_c_unscaled)   
 
 
-
 def prediction(crypto):
   #Choose between BTCUSDT ETHUSDT XMRUSDT
   if crypto == "BTCUSDT":
     #Fetch Last Day 3min Candles Data
     klines = client.get_historical_klines(crypto, Client.KLINE_INTERVAL_3MINUTE, "1 day ago UTC")
+
     pred_df = pd.DataFrame(klines)
     pred_df.columns = (['Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close Time', 'Quote Asset Volume','Nb of Trade', 'TakerBuyBaseVolume', 'TakerBuyQuoteVolume','Ignored'])
+    # hist_df.drop(labels = ['TakerBuyBaseVolume', 'TakerBuyQuoteVolume', 'Ignored', 'Quote Asset Volume'], inplace = True,axis = 1)
     pred_df['Close Time'] = pd.to_datetime(pred_df['Close Time']/1000, unit='s')
+    # hist_df['Open Time'] = pd.to_datetime(hist_df['Open Time']/1000, unit='s')
     pred_df.drop(['Ignored', 'TakerBuyBaseVolume', 'TakerBuyQuoteVolume', 'Quote Asset Volume'], inplace= True, axis = 1)
 
-    #load scaled btc array
-    np_scaled = load(r'scaled\btc_np_scaled.npy')
+    #load scaled xmr array
+    np_scaled = load('scaled/btc_np_scaled.npy')
 
     pred_df = pred_df.apply(pd.to_numeric)
     pred = np_scaled[-51:-1,:].reshape(1,50,5)
 
-    #load model & scaler for BTC
-    btc_scaler_pred = load(open('Scalers/btc_scaler_pred.pkl', 'rb'), allow_pickle = True)
+    # pred_df.to_csv('5H_avg_pred_df')
+    # pred_df
     model = keras.models.load_model('Models\BTC_Model_3MIN.h5')
     btc_y_pred_scaled = model(pred)
-    btc_y_pred = btc_scaler_pred.inverse_transform(btc_y_pred_scaled)
-
-
+    btc_y_pred = scaler_pred.inverse_transform(btc_y_pred_scaled) 
     return btc_y_pred
-
   elif crypto == "XMRUSDT":
 
     #Fetch Last Day 3MINUTE Candles Data
     klines = client.get_historical_klines(crypto, Client.KLINE_INTERVAL_3MINUTE, "1 day ago UTC")
+
     pred_df = pd.DataFrame(klines)
     pred_df.columns = (['Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close Time', 'Quote Asset Volume','Nb of Trade', 'TakerBuyBaseVolume', 'TakerBuyQuoteVolume','Ignored'])
+    # hist_df.drop(labels = ['TakerBuyBaseVolume', 'TakerBuyQuoteVolume', 'Ignored', 'Quote Asset Volume'], inplace = True,axis = 1)
     pred_df['Close Time'] = pd.to_datetime(pred_df['Close Time']/1000, unit='s')
+    # hist_df['Open Time'] = pd.to_datetime(hist_df['Open Time']/1000, unit='s')
     pred_df.drop(['Ignored', 'TakerBuyBaseVolume', 'TakerBuyQuoteVolume', 'Quote Asset Volume'], inplace= True, axis = 1)
 
     #load scaled xmr array
     np_scaled = load(r'scaled\xmr_np_scaled.npy')
+
     xmr_pred_df = pred_df.apply(pd.to_numeric)
     xmr_pred = np_scaled[-51:-1,:].reshape(1,50,5)
 
-    #load model & scaler for XMR
-    xmr_scaler_pred = load(open(r'Scalers\xmr_scaler_pred.pkl', 'rb'), allow_pickle = True)
+    # pred_df.to_csv('5H_avg_pred_df')
+    # pred_df
     xmr_model = keras.models.load_model('Models\XMR_Model_3MIN.h5')
     xmr_y_pred_scaled = xmr_model(xmr_pred)
-    xmr_y_pred = xmr_scaler_pred.inverse_transform(xmr_y_pred_scaled)
+    xmr_y_pred = scaler_pred.inverse_transform(xmr_y_pred_scaled)
 
     return xmr_y_pred
       
@@ -133,22 +136,22 @@ def prediction(crypto):
 
     pred_df = pd.DataFrame(klines)
     pred_df.columns = (['Open Time', 'Open', 'High', 'Low', 'Close', 'Volume', 'Close Time', 'Quote Asset Volume','Nb of Trade', 'TakerBuyBaseVolume', 'TakerBuyQuoteVolume','Ignored'])
+    # hist_df.drop(labels = ['TakerBuyBaseVolume', 'TakerBuyQuoteVolume', 'Ignored', 'Quote Asset Volume'], inplace = True,axis = 1)
     pred_df['Close Time'] = pd.to_datetime(pred_df['Close Time']/1000, unit='s')
+    # hist_df['Open Time'] = pd.to_datetime(hist_df['Open Time']/1000, unit='s')
     pred_df.drop(['Ignored', 'TakerBuyBaseVolume', 'TakerBuyQuoteVolume', 'Quote Asset Volume'], inplace= True, axis = 1)
+    # hist_df['Open Time'] = hist_df.index
 
-    #load scaled ETH array
-    np_scaled = load('scaled\eth_np_scaled.npy')
+    #load scaled xmr array
+    np_scaled = load(r'scaled/eth_np_scaled.npy')
     eth_pred_df = pred_df.apply(pd.to_numeric)
     eth_pred = np_scaled[-51:-1,:].reshape(1,50,5)
 
-    #load model & scaler for ETH
-    eth_scaler_pred = load(open('Scalers\eth_scaler_pred.pkl', 'rb'), allow_pickle = True)
     eth_model = keras.models.load_model('Models\ETH_Model_3MIN.h5')
     eth_y_pred_scaled = eth_model(eth_pred)
-    eth_y_pred = eth_scaler_pred.inverse_transform(eth_y_pred_scaled)
+    eth_y_pred = scaler_pred.inverse_transform(eth_y_pred_scaled)
 
     return eth_y_pred
-
 
 if __name__ == '__main__':
    app.run()
